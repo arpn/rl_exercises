@@ -1,0 +1,388 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.1' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     13228,        380]
+NotebookOptionsPosition[     12377,        359]
+NotebookOutlinePosition[     12770,        375]
+CellTagsIndexPosition[     12727,        372]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Blackjack", "Section",ExpressionUUID->"111ce7fd-1ff7-4439-ae16-7c16f18a1579"],
+
+Cell[BoxData[{
+ RowBox[{"Draw", ":=", 
+  RowBox[{"Min", "[", 
+   RowBox[{
+    RowBox[{"RandomInteger", "[", 
+     RowBox[{"{", 
+      RowBox[{"1", ",", "13"}], "}"}], "]"}], ",", "10"}], "]"}]}], "\n", 
+ RowBox[{
+  RowBox[{"PolicyStep", "[", 
+   RowBox[{"{", 
+    RowBox[{"sum_", ",", "usableAce_"}], "}"}], "]"}], ":=", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"d", "=", "Draw"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"\[Not]", "usableAce"}], "\[And]", 
+        RowBox[{"d", "\[Equal]", "1"}], "\[And]", 
+        RowBox[{
+         RowBox[{"sum", "+", "11"}], "\[LessEqual]", "21"}]}], ",", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"sum", "+", "11"}], ",", "True"}], "}"}], "]"}]}], "]"}], 
+     ";", "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"usableAce", "\[And]", 
+        RowBox[{
+         RowBox[{"sum", "+", "d"}], ">", "21"}]}], ",", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"sum", "+", "d", "-", "10"}], ",", "False"}], "}"}], 
+        "]"}]}], "]"}], ";", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"sum", "+", "d"}], ",", "usableAce"}], "}"}]}]}], 
+   "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Episode", "[", 
+   RowBox[{"21", ",", "dealerShowing_", ",", "usableAce_"}], "]"}], ":=", 
+  RowBox[{"With", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"d", "=", "Draw"}], "}"}], ",", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"dealerShowing", "\[Equal]", "1"}], "\[And]", 
+         RowBox[{"d", "\[Equal]", "10"}]}], ")"}], "\[Or]", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"dealerShowing", "\[Equal]", "10"}], "\[And]", 
+         RowBox[{"d", "\[Equal]", "1"}]}], ")"}]}], ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"{", 
+          RowBox[{"21", ",", "usableAce"}], "}"}], "}"}], ",", "0"}], "}"}], 
+      ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"{", 
+          RowBox[{"21", ",", "usableAce"}], "}"}], "}"}], ",", "1"}], "}"}]}],
+      "]"}]}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Episode", "[", 
+   RowBox[{"start_Integer", ",", "dealerShowing_Integer", ",", 
+    RowBox[{"usableAce_", "?", "BooleanQ"}]}], "]"}], ":=", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"seq", ",", "sum", ",", "dealer"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"seq", "=", 
+      RowBox[{"NestWhileList", "[", 
+       RowBox[{"PolicyStep", ",", 
+        RowBox[{"{", 
+         RowBox[{"start", ",", "usableAce"}], "}"}], ",", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}],
+           "<", "20"}], "&"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"sum", "=", 
+      RowBox[{"seq", "\[LeftDoubleBracket]", 
+       RowBox[{
+        RowBox[{"-", "1"}], ",", "1"}], "\[RightDoubleBracket]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"sum", ">", "21"}], ",", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"seq", ",", 
+          RowBox[{"-", "1"}]}], "}"}], "]"}]}], "]"}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"dealer", "=", 
+      RowBox[{"First", "@", 
+       RowBox[{"NestWhile", "[", 
+        RowBox[{"PolicyStep", ",", 
+         RowBox[{"{", 
+          RowBox[{"dealerShowing", ",", 
+           RowBox[{"If", "[", 
+            RowBox[{
+             RowBox[{"dealerShowing", "\[Equal]", "1"}], ",", "True", ",", 
+             "False"}], "]"}]}], "}"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+           "#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "<", 
+           "17"}], "&"}]}], "]"}]}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"dealer", ">", "21"}], ",", 
+       RowBox[{"Return", "[", 
+        RowBox[{"{", 
+         RowBox[{"seq", ",", "1"}], "}"}], "]"}]}], "]"}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{"seq", ",", 
+       TagBox[GridBox[{
+          {"\[Piecewise]", GridBox[{
+             {"1", 
+              RowBox[{"sum", ">", "dealer"}]},
+             {"0", 
+              RowBox[{"sum", "\[Equal]", "dealer"}]},
+             {
+              RowBox[{"-", "1"}], "True"}
+            },
+            AllowedDimensions->{2, Automatic},
+            Editable->True,
+            
+            GridBoxAlignment->{
+             "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, 
+              "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+            
+            GridBoxItemSize->{
+             "Columns" -> {{Automatic}}, "ColumnsIndexed" -> {}, 
+              "Rows" -> {{1.}}, "RowsIndexed" -> {}},
+            GridBoxSpacings->{"Columns" -> {
+                Offset[0.27999999999999997`], {
+                 Offset[0.84]}, 
+                Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+                Offset[0.2], {
+                 Offset[0.4]}, 
+                Offset[0.2]}, "RowsIndexed" -> {}},
+            Selectable->True]}
+         },
+         GridBoxAlignment->{
+          "Columns" -> {{Left}}, "ColumnsIndexed" -> {}, 
+           "Rows" -> {{Baseline}}, "RowsIndexed" -> {}},
+         GridBoxItemSize->{
+          "Columns" -> {{Automatic}}, "ColumnsIndexed" -> {}, 
+           "Rows" -> {{1.}}, "RowsIndexed" -> {}},
+         GridBoxSpacings->{"Columns" -> {
+             Offset[0.27999999999999997`], {
+              Offset[0.35]}, 
+             Offset[0.27999999999999997`]}, "ColumnsIndexed" -> {}, "Rows" -> {
+             Offset[0.2], {
+              Offset[0.4]}, 
+             Offset[0.2]}, "RowsIndexed" -> {}}],
+        "Piecewise",
+        DeleteWithContents->True,
+        Editable->False,
+        SelectWithContents->True,
+        Selectable->False,
+        StripWrapperBoxes->True]}], "}"}]}]}], "\[IndentingNewLine]", 
+   "]"}]}]}], "Input",
+ CellLabel->"In[1]:=",ExpressionUUID->"7e267d6b-8c9b-4cb4-a415-478fe219adad"],
+
+Cell[TextData[{
+ "This is an undiscounted episodic task, so the returns are simply ",
+ Cell[BoxData[
+  FormBox[
+   RowBox[{"R", "=", 
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"-", "1"}], ",", "0", ",", "1"}], "}"}]}], TraditionalForm]],
+  ExpressionUUID->"ad09d669-8ef0-4b95-8e80-74286fb45820"],
+ ". Each episode is finite because no state can be visited twice."
+}], "Text",ExpressionUUID->"0277f5e8-301f-4f3d-a125-68bf41063781"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"EstimateValue", "[", "iters_Integer", "]"}], ":=", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"games", ",", "wins", ",", "ties", ",", "losses"}], "}"}], ",", 
+    "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"games", "=", 
+      RowBox[{"Table", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{
+            RowBox[{"Map", "[", 
+             RowBox[{
+              RowBox[{"Insert", "[", 
+               RowBox[{"dealerShowing", ",", "2"}], "]"}], ",", 
+              RowBox[{
+              "#", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}]}], 
+             "]"}], ",", 
+            RowBox[{
+            "#", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}]}], 
+           "}"}], "&"}], "@", 
+         RowBox[{"Episode", "[", 
+          RowBox[{"s", ",", "dealerShowing", ",", "usableAce"}], "]"}]}], ",", 
+        RowBox[{"{", 
+         RowBox[{"s", ",", "12", ",", "21"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"dealerShowing", ",", "1", ",", "10"}], "}"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"usableAce", ",", 
+          RowBox[{"{", 
+           RowBox[{"False", ",", "True"}], "}"}]}], "}"}], ",", 
+        RowBox[{"{", "iters", "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"games", "=", 
+      RowBox[{"Flatten", "[", 
+       RowBox[{"games", ",", "3"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"games", "=", 
+      RowBox[{"GroupBy", "[", 
+       RowBox[{"games", ",", "Last"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"games", "=", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"Flatten", "[", 
+         RowBox[{
+          RowBox[{"Map", "[", 
+           RowBox[{"First", ",", "#"}], "]"}], ",", "1"}], "]"}], "&"}], "/@",
+        "games"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"games", "=", 
+      RowBox[{
+       RowBox[{"Select", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"First", "[", "#", "]"}], "\[LessEqual]", "21"}], "&"}], 
+        "]"}], "/@", "games"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"wins", "=", 
+      RowBox[{"Counts", "[", 
+       RowBox[{"games", "[", "1", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"ties", "=", 
+      RowBox[{"Counts", "[", 
+       RowBox[{"games", "[", "0", "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     
+     RowBox[{"losses", "=", 
+      RowBox[{"Counts", "[", 
+       RowBox[{"games", "[", 
+        RowBox[{"-", "1"}], "]"}], "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"Print", "[", 
+      RowBox[{"\"\<# of samples = \>\"", ",", 
+       RowBox[{
+        RowBox[{"Total", "[", "wins", "]"}], "+", 
+        RowBox[{"Total", "[", "ties", "]"}], "+", 
+        RowBox[{"Total", "[", "losses", "]"}]}]}], "]"}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Merge", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"wins", ",", 
+         RowBox[{"0", "ties"}], ",", 
+         RowBox[{"-", "losses"}]}], "}"}], ",", 
+       RowBox[{
+        FractionBox[
+         RowBox[{"Total", "@", "#"}], 
+         RowBox[{"Total", "@", 
+          RowBox[{"Abs", "@", "#"}]}]], "&"}]}], "]"}]}]}], 
+   "\[IndentingNewLine]", "]"}]}]], "Input",
+ CellLabel->"In[5]:=",ExpressionUUID->"43ed5e69-8f21-4a47-999f-4af8a634ecbe"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"values", "=", 
+   RowBox[{"EstimateValue", "[", "2000", "]"}]}], ";"}]], "Input",
+ CellLabel->"In[6]:=",ExpressionUUID->"be4a1ef7-4a22-43e7-93cd-6ac701054710"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"List", "@@@", 
+    RowBox[{"Normal", "@", 
+     RowBox[{
+      RowBox[{"KeySelect", "[", 
+       RowBox[{
+        RowBox[{"#", "\[LeftDoubleBracket]", "3", "\[RightDoubleBracket]"}], 
+        "&"}], "]"}], "@", "values"}]}]}], "//", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{"Delete", "[", 
+      RowBox[{
+       RowBox[{"Flatten", "[", "#", "]"}], ",", "3"}], "]"}], "&"}], "]"}]}], 
+  "//", 
+  RowBox[{
+   RowBox[{"ListPlot3D", "[", 
+    RowBox[{"#", ",", 
+     RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+     RowBox[{"PlotLabel", "\[Rule]", "\"\<Usable ace\>\""}]}], "]"}], 
+   "&"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"List", "@@@", 
+    RowBox[{"Normal", "@", 
+     RowBox[{
+      RowBox[{"KeySelect", "[", 
+       RowBox[{
+        RowBox[{"\[Not]", 
+         RowBox[{
+         "#", "\[LeftDoubleBracket]", "3", "\[RightDoubleBracket]"}]}], "&"}],
+        "]"}], "@", "values"}]}]}], "//", 
+   RowBox[{"Map", "[", 
+    RowBox[{
+     RowBox[{"Delete", "[", 
+      RowBox[{
+       RowBox[{"Flatten", "[", "#", "]"}], ",", "3"}], "]"}], "&"}], "]"}]}], 
+  "//", 
+  RowBox[{
+   RowBox[{"ListPlot3D", "[", 
+    RowBox[{"#", ",", 
+     RowBox[{"PlotRange", "\[Rule]", "All"}], ",", 
+     RowBox[{"PlotLabel", "\[Rule]", "\"\<No usable ace\>\""}]}], "]"}], 
+   "&"}]}]}], "Input",
+ CellLabel->"In[7]:=",ExpressionUUID->"d77fcc52-ca07-4912-9cf6-c202b935b29d"]
+}, Open  ]]
+},
+WindowSize->{1275, 1233},
+WindowMargins->{{Automatic, 18}, {18, Automatic}},
+FrontEndVersion->"12.1 for Linux x86 (64-bit) (March 14, 2020)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"db6e9b01-3efc-42af-818e-4ad7d4e2828f"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 83, 0, 67, "Section",ExpressionUUID->"111ce7fd-1ff7-4439-ae16-7c16f18a1579"],
+Cell[666, 24, 6286, 176, 412, "Input",ExpressionUUID->"7e267d6b-8c9b-4cb4-a415-478fe219adad"],
+Cell[6955, 202, 434, 10, 35, "Text",ExpressionUUID->"0277f5e8-301f-4f3d-a125-68bf41063781"],
+Cell[7392, 214, 3328, 89, 325, "Input",ExpressionUUID->"43ed5e69-8f21-4a47-999f-4af8a634ecbe"],
+Cell[10723, 305, 194, 4, 30, "Input",ExpressionUUID->"be4a1ef7-4a22-43e7-93cd-6ac701054710"],
+Cell[10920, 311, 1441, 45, 53, "Input",ExpressionUUID->"d77fcc52-ca07-4912-9cf6-c202b935b29d"]
+}, Open  ]]
+}
+]
+*)
+
